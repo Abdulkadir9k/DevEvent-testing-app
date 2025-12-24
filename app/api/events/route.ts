@@ -2,7 +2,6 @@ import connectDB from "@/lib/mongodb";
 import { NextRequest, NextResponse } from "next/server";
 import Event from "../../../database/event.model";
 import { v2 as cloudinary } from "cloudinary";
-import { error } from "console";
 
 export async function POST(req: NextRequest) {
 
@@ -23,6 +22,9 @@ export async function POST(req: NextRequest) {
         const file = formData.get("image") as File;
         if (!file) return NextResponse.json({ message: "Image File Missing" }, { status: 400 });
 
+        let tags = JSON.parse(formData.get("tags") as string);
+        let agenda = JSON.parse(formData.get("agenda") as string);
+
         const arrayBuffer = await file.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
 
@@ -38,7 +40,12 @@ export async function POST(req: NextRequest) {
         event.image = (uploadResult as { secure_url: string }).secure_url;
 
 
-        const CreateEvents = await Event.create(event);
+        const CreateEvents = await Event.create({
+            ...event,
+            tags: tags,
+            agenda: agenda,
+        });
+        console.log(CreateEvents);
         return NextResponse.json({ message: "Event Created Successfully", event: CreateEvents }, { status: 201 });
 
     } catch (e) {
@@ -51,6 +58,7 @@ export async function GET() {
     try {
         await connectDB();
         const events = await Event.find().sort({ createdAt: -1 });
+        console.log(events);
         return NextResponse.json({ message: "Event fetched Successfully", events }, { status: 200 });
 
     } catch (e) {
