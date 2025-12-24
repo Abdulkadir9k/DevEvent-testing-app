@@ -32,7 +32,7 @@ const Home = async () => {
         <h3>Featured Events</h3>
         <ul className="events">
           {events && events.length > 0 && events.map((event: IEvent) => (
-            <li key={event.title}><EventCard {...event}/></li>
+            <li className="list-none" key={event.title}><EventCard {...event}/></li>
 
           ))}
         </ul>

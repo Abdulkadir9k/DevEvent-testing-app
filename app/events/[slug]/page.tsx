@@ -1,4 +1,7 @@
 import BookEvent from "@/components/BookEvent";
+import EventCard from "@/components/EventCard";
+import { IEvent } from "@/database";
+import { getSimiarEventsBySlug } from "@/lib/actions/event.actions";
 import Image from "next/image";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
@@ -37,6 +40,13 @@ const EventDetailsPage = async ({ params }: { params: Promise<{ slug: string }> 
   const { event: { description, overview, venue, location, date, time, mode, audience, agenda, organizer, tags, image } } = await request.json();
 
   const bookings = 10; // Placeholder for bookings count
+
+  const similarEvents: IEvent[] = (await getSimiarEventsBySlug(slug)).map((event) => ({
+    ...event,
+    _id: event._id.toString(), // Convert ObjectId to string
+    agenda: JSON.parse(event.agenda[0]), // Parse agenda JSON string into an array
+    tags: JSON.parse(event.tags[0]), // Parse tags JSON string into an array
+  }));
 
   return (
     <section id="event">
@@ -102,11 +112,16 @@ const EventDetailsPage = async ({ params }: { params: Promise<{ slug: string }> 
           </div>
 
         </aside>
+      </div>
 
-
-
-
-
+      <div className="flex w-full flex-col gap-4 mt-20">
+        <h2>Similar Events You May Like</h2>
+        <div className="events">
+          {similarEvents.length > 0 && similarEvents.map((similarEvent: IEvent) => (
+            console.log(similarEvent),
+            <EventCard key={similarEvent._id.toString()} {...similarEvent} />
+          ))}
+        </div>
       </div>
 
     </section>
