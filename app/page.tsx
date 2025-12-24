@@ -1,10 +1,13 @@
 import EventCard from "@/components/EventCard"
 import ExploreBtn from "@/components/ExploreBtn"
-import { events } from "@/lib/constants"
+import { IEvent } from "@/database"
 import { getPostHogClient } from "@/lib/posthog-server"
 
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+
 const Home = async () => {
-  console.log("am I in server or client?")
+   const response = await fetch(`${BASE_URL}/api/events`)
+   const {events} = await response.json()
 
   // Server-side tracking for home page view (top of conversion funnel)
   const posthog = getPostHogClient();
@@ -28,7 +31,7 @@ const Home = async () => {
       <div className="mt-20 space-y-5">
         <h3>Featured Events</h3>
         <ul className="events">
-          {events.map((event) => (
+          {events && events.length > 0 && events.map((event: IEvent) => (
             <li key={event.title}><EventCard {...event}/></li>
 
           ))}
