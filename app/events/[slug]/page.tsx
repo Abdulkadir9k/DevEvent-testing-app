@@ -2,6 +2,7 @@ import BookEvent from "@/components/BookEvent";
 import EventCard from "@/components/EventCard";
 import { IEvent } from "@/database";
 import { getSimiarEventsBySlug } from "@/lib/actions/event.actions";
+import { cacheLife } from "next/cache";
 import Image from "next/image";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
@@ -35,9 +36,12 @@ const EventTags = ({ tags }: { tags: string[] }) => (
 )
 
 const EventDetailsPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
+  "use cache";
+  cacheLife("minutes")
   const { slug } = await params;
   const request = await fetch(`${BASE_URL}/api/events/${slug}`);
-  const { event: { description, overview, venue, location, date, time, mode, audience, agenda, organizer, tags, image } } = await request.json();
+  const data = await request.json();
+  const { description, overview, image, date, time, venue, location, mode, audience, organizer, agenda, tags } = data.event;
 
   const bookings = 10; // Placeholder for bookings count
 
@@ -108,7 +112,7 @@ const EventDetailsPage = async ({ params }: { params: Promise<{ slug: string }> 
             ) : (
               <p className="text-sm">Be the first to book the spot</p>
             )}
-            <BookEvent />
+            <BookEvent eventID={data.event._id.toString()} slug={slug}/>
           </div>
 
         </aside>
