@@ -3,7 +3,7 @@ import ExploreBtn from "@/components/ExploreBtn"
 import { IEvent } from "@/database"
 // import { getPostHogClient } from "@/lib/posthog-server"
 import { cacheLife } from "next/cache";
-import events from '@/lib/constants'
+import {events} from '@/lib/constants'
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
