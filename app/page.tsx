@@ -1,7 +1,7 @@
 import EventCard from "@/components/EventCard"
 import ExploreBtn from "@/components/ExploreBtn"
 import { IEvent } from "@/database"
-import { getPostHogClient } from "@/lib/posthog-server"
+// import { getPostHogClient } from "@/lib/posthog-server"
 import { cacheLife } from "next/cache";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
@@ -13,16 +13,16 @@ const Home = async () => {
    const {events} = await response.json()
 
   // Server-side tracking for home page view (top of conversion funnel)
-  const posthog = getPostHogClient();
-  posthog.capture({
-    distinctId: 'server_home_visitor',
-    event: 'home_page_viewed',
-    properties: {
-      featured_events_count: events.length,
-      page: 'home',
-    }
-  });
-  await posthog.shutdown();
+  // const posthog = getPostHogClient();
+  // posthog.capture({
+  //   distinctId: 'server_home_visitor',
+  //   event: 'home_page_viewed',
+  //   properties: {
+  //     featured_events_count: events.length,
+  //     page: 'home',
+  //   }
+  // });
+  // await posthog.shutdown();
 
   return (
 
